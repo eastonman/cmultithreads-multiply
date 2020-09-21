@@ -3,6 +3,7 @@
 #include <time.h>
 #include <pthread.h>
 #include "arithmetic.c"
+#include "utils.c"
 
 #define MAX_LENGTH 150000
 
@@ -31,62 +32,26 @@ int main()
     }
 
     // Initial result array
-    int maxlength = m + n + 1;
-    int c[maxlength];
-    memset(c, 0, maxlength * sizeof(int));
+    int lengthC = m + n + 1;
+    int c[lengthC];
+    memset(c, 0, lengthC * sizeof(int));
 
-    struct timespec start, stop;
-    double duration;
-
-    // Run Multiply
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-    multiply(a, b, c, n, m);
-    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-    duration = (double)(stop.tv_sec - start.tv_sec + (stop.tv_nsec, start.tv_nsec) / 1000000000.0);
-    printf("Traditional method costs time: %f\n", duration);
-
-    // Find out first non-zero digit
-    for (j = m + n; j > 0; j--)
-    {
-        if (c[j] != 0)
-            break;
-    }
-
-    // Do output
+    // Clear output.txt
     FILE *output = NULL;
     output = fopen("./output.txt", "w+");
-    for (i = j; i >= 0; i--)
-    {
-        fprintf(output, "%d", c[i]);
-    }
-    fprintf(output, "\n");
     fclose(output);
+
+    // Run Multiply
+    benchmark(&multiply, a, b, c, n, m);
+
+    writeResult(c, lengthC);
 
     // Reset c
-    memset(c, 0, maxlength * sizeof(int));
+    memset(c, 0, lengthC * sizeof(int));
 
     // Run MultiProcessing Multiply
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-    newMultiply(a, b, c, n, m);
-    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-    duration = (double)(stop.tv_sec - start.tv_sec + (stop.tv_nsec, start.tv_nsec) / 1000000000.0);
-    printf("With multithreads method costs time: %f\n", duration);
-
-    // Find out first non-zero digit
-    for (j = m + n; j > 0; j--)
-    {
-        if (c[j] != 0)
-            break;
-    }
-
-    // Do output
-    output = fopen("./output.txt", "a+");
-    for (i = j; i >= 0; i--)
-    {
-        fprintf(output, "%d", c[i]);
-    }
-    fprintf(output, "\n");
-    fclose(output);
+    benchmark(&newMultiply, a, b, c, n, m);
+    writeResult(c, lengthC);
 
     return 0;
 }
