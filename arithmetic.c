@@ -96,3 +96,30 @@ void bigjoin(int *var, int *result, int length)
     // Handles the last carry
     result[length] += carry;
 }
+
+// Traditional vertical calculation like algorithm,
+// With openmp
+void multiplyMP(int *a, int *b, int *c, int m, int n)
+{
+    int i, j;
+
+    // Multiply digit by digit
+    #pragma omp parallel for num_threads(4)
+    for (i = 0; i < m; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            c[i + j] += a[i] * b[j];
+        }
+    }
+
+    // Handles carries
+    for (i = 0; i < n + m; i++)
+    {
+        if (c[i] >= 10)
+        {
+            c[i + 1] += c[i] / 10;
+            c[i] %= 10;
+        }
+    }
+}

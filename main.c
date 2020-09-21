@@ -2,6 +2,7 @@
 #include <string.h>
 #include <time.h>
 #include <pthread.h>
+#include <omp.h>
 #include "arithmetic.c"
 #include "utils.c"
 
@@ -53,6 +54,12 @@ int main()
     benchmark(&newMultiply, a, b, c, n, m);
     writeResult(c, lengthC);
 
+    // Reset c
+    memset(c, 0, lengthC * sizeof(int));
+
+    benchmark(&multiplyMP, a, b, c, n, m);
+    writeResult(c, lengthC);
+
     return 0;
 }
 
@@ -73,6 +80,7 @@ void *worker(void *arg)
              p->c,
              p->n,
              p->m);
+    //printf("%s\n","Done");
 }
 
 // Toom-Cook 2-way algorithm with 3 threads
@@ -152,8 +160,8 @@ void newMultiply(int *a, int *b, int *c, int lengthA, int lengthB)
     {
         pthread_join(ids[i], NULL);
     }
-    bigsub(middle, a1b1, middle2, lengthMiddle, lengthA2B2);
-    bigsub(middle2, a2b2, middle, lengthMiddle, lengthA1B1);
+    bigsub(middle, a1b1, middle2, lengthMiddle, lengthA1B1);
+    bigsub(middle2, a2b2, middle, lengthMiddle, lengthA2B2);
 
     bigjoin(a2b2, c, lengthA2B2);
     bigjoin(a1b1, c + 2 * half, lengthA1B1);
