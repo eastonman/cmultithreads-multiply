@@ -37,3 +37,25 @@ void writeResult(int *c, int lengthC)
     fprintf(output, "\n");
     fclose(output);
 }
+
+void writeBigResult(unsigned long *c, int lengthC)
+{
+    int j;
+    // Find out first non-zero digit
+    for (j = lengthC - 1; j > 0; j--)
+    {
+        if (c[j] != 0)
+            break;
+    }
+
+    // Do output
+    FILE *output = NULL;
+    output = fopen("./output.txt", "a+");
+    int i;
+    for (i = j; i >= 0; i--)
+    {
+        fprintf(output, "%d", c[i]);
+    }
+    fprintf(output, "\n");
+    fclose(output);
+}

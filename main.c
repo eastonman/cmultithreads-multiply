@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <omp.h>
 #include "arithmetic.c"
+#include "karatsubaSQ.c"
 #include "utils.c"
 
 #define MAX_LENGTH 150000
@@ -51,7 +52,7 @@ int main()
     memset(c, 0, lengthC * sizeof(int));
 
     // Run MultiProcessing Multiply
-    benchmark(&newMultiply, a, b, c, n, m);
+    /*benchmark(&newMultiply, a, b, c, n, m);
     writeResult(c, lengthC);
 
     // Reset c
@@ -59,6 +60,30 @@ int main()
 
     benchmark(&multiplyMP, a, b, c, n, m);
     writeResult(c, lengthC);
+
+    // Reset c
+    memset(c, 0, lengthC * sizeof(int));*/
+
+    unsigned long inputC[n], inputD[m];
+    for (i = 0, j = n - 1; i < n; i++, j--)
+    {
+        inputC[i] = numberN[j] - '0';
+    }
+    for (i = 0, j = m - 1; i < m; i++, j--)
+    {
+        inputD[i] = numberM[j] - '0';
+    }
+    struct MyBig *BigA = &(struct MyBig){inputC, n};
+    struct MyBig *BigB = &(struct MyBig){inputD, m};
+
+    struct timespec start, stop;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    struct MyBig *BigResult = karatsubaSQ(BigA, BigB);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+    double duration = (double)(stop.tv_sec - start.tv_sec + (stop.tv_nsec, start.tv_nsec) / 1000000000.0);
+    printf("Costs time: %f\n", duration);
+
+    writeBigResult(BigResult->ptr, BigResult->length);
 
     return 0;
 }

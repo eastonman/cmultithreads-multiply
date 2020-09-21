@@ -103,8 +103,8 @@ void multiplyMP(int *a, int *b, int *c, int m, int n)
 {
     int i, j;
 
-    // Multiply digit by digit
-    #pragma omp parallel for num_threads(4)
+// Multiply digit by digit
+#pragma omp parallel for num_threads(4)
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
