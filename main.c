@@ -7,7 +7,7 @@
 #include "karatsuba.c"
 #include "utils.c"
 
-#define MAX_LENGTH 500000
+#define MAX_LENGTH 150000
 
 void newMultiply(int *a, int *b, int *c, int m, int n);
 

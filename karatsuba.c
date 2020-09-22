@@ -103,10 +103,10 @@ struct MyBig *karatsubaPL(struct MyBig *a, struct MyBig *b)
                    &arg);
 
     struct MyBig *a2b2 = NULL;
-    arg = (struct parameter){a2, b2, &a2b2};
+    struct parameter arg2 = (struct parameter){a2, b2, &a2b2};
     pthread_create(&ids[1], NULL,
                    workerK,
-                   &arg);
+                   &arg2);
 
     struct MyBig *middle = karatsubaSQ(myBigAdd(a1, b1), myBigAdd(a2, b2));
 

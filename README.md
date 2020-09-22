@@ -15,3 +15,4 @@ Test machine: i7-10750H 2GB RAM
 | Single thread 150000 | 53.556499 |
 | 3 threads Self-implemented 150000 |15.656759|
 | Single thread Karatsuba 150000 | 4.309122|
+| 3 threads Karatsuba 150000 | 1.126843|
