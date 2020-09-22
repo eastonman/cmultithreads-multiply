@@ -4,10 +4,10 @@
 #include <pthread.h>
 #include <omp.h>
 #include "arithmetic.c"
-#include "karatsubaSQ.c"
+#include "karatsuba.c"
 #include "utils.c"
 
-#define MAX_LENGTH 150000
+#define MAX_LENGTH 500000
 
 void newMultiply(int *a, int *b, int *c, int m, int n);
 
@@ -44,27 +44,28 @@ int main()
     fclose(output);
 
     // Run Multiply
-    benchmark(&multiply, a, b, c, n, m);
+    /*benchmark(&multiply, a, b, c, n, m);
 
     writeResult(c, lengthC);
 
     // Reset c
-    memset(c, 0, lengthC * sizeof(int));
+    memset(c, 0, lengthC * sizeof(int));*/
 
     // Run MultiProcessing Multiply
     /*benchmark(&newMultiply, a, b, c, n, m);
     writeResult(c, lengthC);
 
     // Reset c
-    memset(c, 0, lengthC * sizeof(int));
+    memset(c, 0, lengthC * sizeof(int));*/
 
-    benchmark(&multiplyMP, a, b, c, n, m);
+    /*benchmark(&multiplyMP, a, b, c, n, m);
     writeResult(c, lengthC);
 
     // Reset c
     memset(c, 0, lengthC * sizeof(int));*/
 
-    unsigned long inputC[n], inputD[m];
+    unsigned long inputC[n],
+        inputD[m];
     for (i = 0, j = n - 1; i < n; i++, j--)
     {
         inputC[i] = numberN[j] - '0';
@@ -81,6 +82,14 @@ int main()
     struct MyBig *BigResult = karatsubaSQ(BigA, BigB);
     clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
     double duration = (double)(stop.tv_sec - start.tv_sec + (stop.tv_nsec, start.tv_nsec) / 1000000000.0);
+    printf("Costs time: %f\n", duration);
+
+    writeBigResult(BigResult->ptr, BigResult->length);
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    BigResult = karatsubaPL(BigA, BigB);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+    duration = (double)(stop.tv_sec - start.tv_sec + (stop.tv_nsec, start.tv_nsec) / 1000000000.0);
     printf("Costs time: %f\n", duration);
 
     writeBigResult(BigResult->ptr, BigResult->length);
@@ -160,10 +169,10 @@ void newMultiply(int *a, int *b, int *c, int lengthA, int lengthB)
                    worker,
                    &arg);
     //multiply(a + half, b + half, a1b1, lengthA - half, lengthB - half);
-    arg = (struct para){a, b, a2b2, half, half};
+    struct para arg2 = (struct para){a, b, a2b2, half, half};
     pthread_create(&ids[1], NULL,
                    worker,
-                   &arg);
+                   &arg2);
 
     //multiply(a, b, a2b2, half, half);
 
